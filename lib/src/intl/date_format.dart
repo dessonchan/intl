@@ -10,8 +10,8 @@ import 'package:meta/meta.dart';
 import 'constants.dart' as constants;
 import 'date_builder.dart';
 import 'date_computation.dart' as date_computation;
-import 'intl_stream.dart';
 import 'regexp.dart' as regexp;
+import 'string_stack.dart';
 
 part 'date_format_field.dart';
 
@@ -207,9 +207,9 @@ part 'date_format_field.dart';
 ///
 ///     Format Pattern                    Result
 ///     --------------                    -------
-///     'EEE, MMM d, ''yy'                Wed, Jul 10, '96
+///     "EEE, MMM d, ''yy"                Wed, Jul 10, '96
 ///     'h:mm a'                          12:08 PM
-///     'yyyyy.MMMMM.dd GGG hh:mm aaa'    01996.July.10 AD 12:08 PM
+///     'yyyyy.MMMM.dd GGG hh:mm aaa'     01996.July.10 AD 12:08 PM
 //
 // TODO(https://github.com/dart-lang/intl/issues/74): Merge tables.
 //
@@ -304,20 +304,6 @@ class DateFormat {
     return result.toString();
   }
 
-  /// NOT YET IMPLEMENTED.
-  ///
-  /// Returns a date string indicating how long ago (3 hours, 2 minutes)
-  /// something has happened or how long in the future something will happen
-  /// given a [reference] DateTime relative to the current time.
-  String formatDuration(DateTime reference) => '';
-
-  /// NOT YET IMPLEMENTED.
-  ///
-  /// Formats a string indicating how long ago (negative [duration]) or how far
-  /// in the future (positive [duration]) some time is with respect to a
-  /// reference [date].
-  String formatDurationFrom(Duration duration, DateTime date) => '';
-
   /// Given user input, attempt to parse the [inputString] into the anticipated
   /// format, treating it as being in the local timezone.
   ///
@@ -364,11 +350,11 @@ class DateFormat {
   DateTime _parseLoose(String inputString, bool utc) {
     var dateFields = DateBuilder(locale, dateTimeConstructor);
     if (utc) dateFields.utc = true;
-    var stream = IntlStream(inputString);
+    var stack = StringStack(inputString);
     for (var field in _formatFields) {
-      field.parseLoose(stream, dateFields);
+      field.parseLoose(stack, dateFields);
     }
-    if (!stream.atEnd()) {
+    if (!stack.atEnd) {
       throw FormatException(
           'Characters remaining after date parsing in $inputString');
     }
@@ -393,11 +379,11 @@ class DateFormat {
     var dateFields = DateBuilder(locale, dateTimeConstructor);
     if (utc) dateFields.utc = true;
     dateFields.dateOnly = dateOnly;
-    var stream = IntlStream(inputString);
+    var stack = StringStack(inputString);
     for (var field in _formatFields) {
-      field.parse(stream, dateFields);
+      field.parse(stack, dateFields);
     }
-    if (strict && !stream.atEnd()) {
+    if (strict && !stack.atEnd) {
       throw FormatException(
           'Characters remaining after date parsing in $inputString');
     }
@@ -405,7 +391,7 @@ class DateFormat {
     return dateFields.asDate();
   }
 
-  /// Does our format only only date fields, and no time fields.
+  /// Does our format only date fields, and no time fields.
   ///
   /// For example, 'yyyy-MM-dd' would be true, but 'dd hh:mm' would be false.
   bool get dateOnly => _dateOnly ??= _checkDateOnly;

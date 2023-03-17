@@ -147,7 +147,7 @@ remainingEmailsMessage(int howMany, String userName) =>
         other: 'There are $howMany emails left for $userName.')}''',
   name: 'remainingEmailsMessage',
   args: [howMany, userName],
-  desc: How many emails remain after archiving.',
+  desc: 'How many emails remain after archiving.',
   examples: const {'howMany': 42, 'userName': 'Fred'});
 
 print(remainingEmailsMessage(1, 'Fred'));
@@ -241,7 +241,7 @@ To format a number, create a NumberFormat instance.
 ```dart
 var f = NumberFormat('###.0#', 'en_US');
 print(f.format(12.345));
-  ==> 12.34
+  ==> 12.35
 ```
 
 The locale parameter is optional. If omitted, then it will use the
