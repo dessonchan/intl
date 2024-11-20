@@ -11,3 +11,7 @@ README.google.md
 copy.bara.sky
 test/number_format_compact_google3_icu_test.dart
 update_from_cldr_data.sh
+
+# FVM Version Cache
+.fvm/
+.idea
